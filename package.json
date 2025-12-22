@@ -1,18 +1,21 @@
 {
   "name": "get-shit-done-cc",
   "version": "1.3.8",
-  "description": "A meta-prompting, context engineering and spec-driven development system for Claude Code by TÂCHES.",
+  "description": "A meta-prompting, context engineering and spec-driven development system for Codex CLI by TÂCHES.",
   "bin": {
-    "get-shit-done-cc": "bin/install.js"
+    "get-shit-done-cc": "bin/install.js",
+    "get-shit-done-codex": "bin/gsd-codex.js"
   },
   "files": [
     "bin",
+    "codex-prompts",
     "commands",
     "get-shit-done"
   ],
   "keywords": [
-    "claude",
-    "claude-code",
+    "codex",
+    "codex-cli",
+    "openai",
     "ai",
     "meta-prompting",
     "context-engineering",

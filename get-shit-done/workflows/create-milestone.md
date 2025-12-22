@@ -7,7 +7,7 @@ This is used after completing a milestone when ready to define the next chunk of
 <required_reading>
 **Read these files NOW:**
 
-1. ~/.claude/get-shit-done/templates/roadmap.md (milestone-grouped format)
+1. ~/.codex/get-shit-done/templates/roadmap.md (milestone-grouped format)
 2. `.planning/ROADMAP.md`
 3. `.planning/STATE.md`
 4. `.planning/MILESTONES.md` (if exists)
@@ -39,7 +39,7 @@ Extract:
   </step>
 
 <step name="get_milestone_info">
-**If called from /gsd:discuss-milestone (context provided):**
+**If called from /prompts:gsd-discuss-milestone (context provided):**
 Use the theme, scope, and constraints from discussion.
 Suggest milestone name based on theme.
 
@@ -213,7 +213,7 @@ Update `.planning/ROADMAP.md` with new milestone:
 
 Plans:
 
-- [ ] [N]-01: TBD (run /gsd:plan-phase [N] to break down)
+- [ ] [N]-01: TBD (run /prompts:gsd-plan-phase [N] to break down)
 
 #### Phase [N+1]: [Name]
 
@@ -329,15 +329,15 @@ Milestone v[X.Y] [Name] created:
 
 **Phase [N]: [Name]** — [Goal from ROADMAP.md]
 
-`/gsd:plan-phase [N]`
+`/prompts:gsd-plan-phase [N]`
 
 <sub>`/clear` first → fresh context window</sub>
 
 ---
 
 **Also available:**
-- `/gsd:discuss-phase [N]` — gather context first
-- `/gsd:research-phase [N]` — investigate unknowns
+- `/prompts:gsd-discuss-phase [N]` — gather context first
+- `/prompts:gsd-research-phase [N]` — investigate unknowns
 - Review roadmap
 
 ---

@@ -24,8 +24,8 @@ Current milestone in progress: v[X.Y] [Name]
 Phases [N]-[M], [P]% complete
 
 Did you want to:
-1. Complete current milestone first (/gsd:complete-milestone)
-2. Add phases to current milestone (/gsd:add-phase)
+1. Complete current milestone first (/prompts:gsd-complete-milestone)
+2. Add phases to current milestone (/prompts:gsd-add-phase)
 3. Continue anyway - discuss next milestone scope
 
 ```
@@ -113,7 +113,7 @@ Use AskUserQuestion:
 - header: "Ready?"
 - question: "Ready to create the milestone, or explore more?"
 - options (ALL THREE REQUIRED):
-  - "Create milestone" - Proceed to /gsd:new-milestone
+  - "Create milestone" - Proceed to /prompts:gsd-new-milestone
   - "Ask more questions" - Help me think through this more
   - "Let me add context" - I have more to share
 
@@ -144,7 +144,7 @@ Ready to create the milestone structure.
 
 **Create Milestone v[X.Y]** — [Theme Name]
 
-`/gsd:new-milestone`
+`/prompts:gsd-new-milestone`
 
 <sub>`/clear` first → fresh context window</sub>
 
@@ -166,5 +166,5 @@ Pass context forward by summarizing:
 - **Features identified** - What to build/add/fix (the substance)
 - Features explored with clarifying questions
 - Scope synthesized from features (not asked abstractly)
-- Context handed off to /gsd:new-milestone with feature list
+- Context handed off to /prompts:gsd-new-milestone with feature list
 </success_criteria>

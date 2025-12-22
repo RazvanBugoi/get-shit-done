@@ -27,9 +27,9 @@ Output: [...]
 </objective>
 
 <context>
-@.planning/PROJECT.md
-@.planning/ROADMAP.md
-@relevant/source/files.ts
+Read file: .planning/PROJECT.md
+Read file: .planning/ROADMAP.md
+Read file: relevant/source/files.ts
 </context>
 
 <tasks>
@@ -248,11 +248,11 @@ Use @file references to load context for the prompt:
 
 ```markdown
 <context>
-@.planning/PROJECT.md           # Project vision
-@.planning/ROADMAP.md         # Phase structure
-@.planning/phases/02-auth/DISCOVERY.md  # Discovery results
-@src/lib/db.ts                # Existing database setup
-@src/types/user.ts            # Existing type definitions
+Read file: .planning/PROJECT.md           # Project vision
+Read file: .planning/ROADMAP.md         # Phase structure
+Read file: .planning/phases/02-auth/DISCOVERY.md  # Discovery results
+Read file: src/lib/db.ts                # Existing database setup
+Read file: src/types/user.ts            # Existing type definitions
 </context>
 ```
 

@@ -6,6 +6,10 @@ Execute a phase prompt (PLAN.md) and create the outcome summary (SUMMARY.md).
 Read STATE.md before any operation to load project context.
 </required_reading>
 
+<note>
+Codex CLI does not support subagents. When this workflow mentions spawning subagents, run the segment sequentially in the current session or use separate `codex exec` runs per segment.
+</note>
+
 <process>
 
 <step name="load_project_state" priority="first">
@@ -715,7 +719,7 @@ Proceed with proposed change? (yes / different approach / defer)
 
 **Process:**
 
-1. Create .planning/ISSUES.md if doesn't exist (use `~/.claude/get-shit-done/templates/issues.md`)
+1. Create .planning/ISSUES.md if doesn't exist (use `~/.codex/get-shit-done/templates/issues.md`)
 2. Add entry with ISS-XXX number (auto-increment)
 3. Brief notification: `📋 Logged enhancement: [brief] (ISS-XXX)`
 4. Continue task without implementing
@@ -885,7 +889,7 @@ I'll verify after: [verification]
 - If verification passes or N/A: continue to next task
 - If verification fails: inform user, wait for resolution
 
-See ~/.claude/get-shit-done/references/checkpoints.md for complete checkpoint guidance.
+See ~/.codex/get-shit-done/references/checkpoints.md for complete checkpoint guidance.
 </step>
 
 <step name="verification_failure_gate">
@@ -934,7 +938,7 @@ Pass timing data to SUMMARY.md creation.
 
 <step name="create_summary">
 Create `{phase}-{plan}-SUMMARY.md` as specified in the prompt's `<output>` section.
-Use ~/.claude/get-shit-done/templates/summary.md for structure.
+Use ~/.codex/get-shit-done/templates/summary.md for structure.
 
 **File location:** `.planning/phases/XX-name/{phase}-{plan}-SUMMARY.md`
 
@@ -1145,7 +1149,7 @@ EOF
 )"
 ```
 
-For commit message conventions and git workflow patterns, see ~/.claude/get-shit-done/references/git-integration.md
+For commit message conventions and git workflow patterns, see ~/.codex/get-shit-done/references/git-integration.md
 </step>
 
 <step name="update_codebase_map">
@@ -1209,18 +1213,18 @@ Use AskUserQuestion:
 - header: "Phase Issues"
 - question: "[N] issues were logged during this phase. Review now?"
 - options:
-  - "Review issues" - Analyze with /gsd:consider-issues
+  - "Review issues" - Analyze with /prompts:gsd-consider-issues
   - "Continue" - Address later, proceed to next work
 
 **If "Review issues" selected:**
-- Invoke: `SlashCommand("/gsd:consider-issues")`
+- Ask the user to run `/prompts:gsd-consider-issues`
 - After consider-issues completes, return to offer_next
 
 **If "Continue" selected or no issues found:**
 - Proceed to offer_next step
 
 **In YOLO mode:**
-- Note issues were logged but don't prompt: `📋 [N] issues logged this phase (review later with /gsd:consider-issues)`
+- Note issues were logged but don't prompt: `📋 [N] issues logged this phase (review later with /prompts:gsd-consider-issues)`
 - Continue to offer_next automatically
 </step>
 
@@ -1253,7 +1257,7 @@ Summary: .planning/phases/XX-name/{phase}-{plan}-SUMMARY.md
 
 **{phase}-{next-plan}: [Plan Name]** — [objective from next PLAN.md]
 
-`/gsd:execute-plan .planning/phases/XX-name/{phase}-{next-plan}-PLAN.md`
+`/prompts:gsd-execute-plan .planning/phases/XX-name/{phase}-{next-plan}-PLAN.md`
 
 <sub>`/clear` first → fresh context window</sub>
 
@@ -1307,14 +1311,14 @@ This milestone is 100% done.
 
 **Complete Milestone** — archive and prepare for next
 
-`/gsd:complete-milestone`
+`/prompts:gsd-complete-milestone`
 
 <sub>`/clear` first → fresh context window</sub>
 
 ---
 
 **Also available:**
-- `/gsd:add-phase <description>` — add another phase
+- `/prompts:gsd-add-phase <description>` — add another phase
 - Review accomplishments before archiving
 
 ---
@@ -1336,15 +1340,15 @@ All [Y] plans finished.
 
 **Phase [X+1]: [Name]** — [Goal from ROADMAP.md]
 
-`/gsd:plan-phase [X+1]`
+`/prompts:gsd-plan-phase [X+1]`
 
 <sub>`/clear` first → fresh context window</sub>
 
 ---
 
 **Also available:**
-- `/gsd:discuss-phase [X+1]` — gather context first
-- `/gsd:research-phase [X+1]` — investigate unknowns
+- `/prompts:gsd-discuss-phase [X+1]` — gather context first
+- `/prompts:gsd-research-phase [X+1]` — investigate unknowns
 - Review phase accomplishments before continuing
 
 ---

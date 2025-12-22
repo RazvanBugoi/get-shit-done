@@ -6,8 +6,8 @@ that delivers value. The roadmap provides structure, not detailed tasks.
 <required_reading>
 **Read these files NOW:**
 
-1. ~/.claude/get-shit-done/templates/roadmap.md
-2. ~/.claude/get-shit-done/templates/state.md
+1. ~/.codex/get-shit-done/templates/roadmap.md
+2. ~/.codex/get-shit-done/templates/state.md
 3. Read `.planning/PROJECT.md` if it exists
    </required_reading>
 
@@ -32,7 +32,7 @@ If proceeding without brief, gather quick context:
 Scan for available domain expertise:
 
 ```bash
-ls ~/.claude/skills/expertise/ 2>/dev/null
+ls ~/.codex/skills/expertise/ 2>/dev/null
 ```
 
 **Inference:** Based on the brief/user request, infer applicable domains:
@@ -259,10 +259,10 @@ mkdir -p .planning/phases
 </step>
 
 <step name="write_roadmap">
-Use template from `~/.claude/get-shit-done/templates/roadmap.md`.
+Use template from `~/.codex/get-shit-done/templates/roadmap.md`.
 
 Initial roadmaps use integer phases (1, 2, 3...).
-Decimal phases added later via /gsd:insert-phase command (if it exists).
+Decimal phases added later via /prompts:gsd-insert-phase command (if it exists).
 
 Write to `.planning/ROADMAP.md` with:
 
@@ -287,7 +287,7 @@ mkdir -p .planning/phases/02-{phase-name}
 <step name="initialize_project_state">
 Create STATE.md - the project's living memory.
 
-Use template from `~/.claude/get-shit-done/templates/state.md`.
+Use template from `~/.codex/get-shit-done/templates/state.md`.
 
 Write to `.planning/STATE.md`:
 
@@ -388,15 +388,15 @@ Project initialized:
 
 **Phase 1: [Name]** — [Goal from ROADMAP.md]
 
-`/gsd:plan-phase 1`
+`/prompts:gsd-plan-phase 1`
 
 <sub>`/clear` first → fresh context window</sub>
 
 ---
 
 **Also available:**
-- `/gsd:discuss-phase 1` — gather context first
-- `/gsd:research-phase 1` — investigate unknowns
+- `/prompts:gsd-discuss-phase 1` — gather context first
+- `/prompts:gsd-research-phase 1` — investigate unknowns
 - Review roadmap
 
 ---

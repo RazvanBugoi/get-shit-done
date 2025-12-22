@@ -302,7 +302,7 @@ Extract completed milestone details and create archive file.
 
 1. Create archive file path: `.planning/milestones/v[X.Y]-ROADMAP.md`
 
-2. Read `~/.claude/get-shit-done/templates/milestone-archive.md` template
+2. Read `~/.codex/get-shit-done/templates/milestone-archive.md` template
 
 3. Extract data from current ROADMAP.md:
 
@@ -430,14 +430,14 @@ Tag: v[X.Y]
 
 **Plan Next Milestone** — define v[X.Y+1] features and scope
 
-`/gsd:discuss-milestone`
+`/prompts:gsd-discuss-milestone`
 
 <sub>`/clear` first → fresh context window</sub>
 
 ---
 
 **Also available:**
-- `/gsd:new-milestone` — create directly if scope is clear
+- `/prompts:gsd-new-milestone` — create directly if scope is clear
 
 ---
 ```

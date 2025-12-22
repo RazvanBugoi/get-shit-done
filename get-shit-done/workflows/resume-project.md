@@ -26,7 +26,7 @@ ls .planning/PROJECT.md 2>/dev/null && echo "Project file exists"
 
 **If STATE.md exists:** Proceed to load_state
 **If only ROADMAP.md/PROJECT.md exist:** Offer to reconstruct STATE.md
-**If .planning/ doesn't exist:** This is a new project - route to /gsd:new-project
+**If .planning/ doesn't exist:** This is a new project - route to /prompts:gsd-new-project
 </step>
 
 <step name="load_state">
@@ -145,13 +145,13 @@ Present contextual options based on project state:
 What would you like to do?
 
 [Primary action based on state - e.g.:]
-1. Resume from checkpoint (/gsd:execute-plan .planning/phases/XX-name/.continue-here-02-01.md)
+1. Resume from checkpoint (/prompts:gsd-execute-plan .planning/phases/XX-name/.continue-here-02-01.md)
    OR
-1. Execute next plan (/gsd:execute-plan .planning/phases/XX-name/02-02-PLAN.md)
+1. Execute next plan (/prompts:gsd-execute-plan .planning/phases/XX-name/02-02-PLAN.md)
    OR
-1. Discuss Phase 3 context (/gsd:discuss-phase 3) [if CONTEXT.md missing]
+1. Discuss Phase 3 context (/prompts:gsd-discuss-phase 3) [if CONTEXT.md missing]
    OR
-1. Plan Phase 3 (/gsd:plan-phase 3) [if CONTEXT.md exists or discuss option declined]
+1. Plan Phase 3 (/prompts:gsd-plan-phase 3) [if CONTEXT.md exists or discuss option declined]
 
 [Secondary options:]
 2. Review current phase status
@@ -182,7 +182,7 @@ Based on user selection, route to appropriate workflow:
 
   **{phase}-{plan}: [Plan Name]** — [objective from PLAN.md]
 
-  `/gsd:execute-plan [path]`
+  `/prompts:gsd-execute-plan [path]`
 
   <sub>`/clear` first → fresh context window</sub>
 
@@ -196,15 +196,15 @@ Based on user selection, route to appropriate workflow:
 
   **Phase [N]: [Name]** — [Goal from ROADMAP.md]
 
-  `/gsd:plan-phase [phase-number]`
+  `/prompts:gsd-plan-phase [phase-number]`
 
   <sub>`/clear` first → fresh context window</sub>
 
   ---
 
   **Also available:**
-  - `/gsd:discuss-phase [N]` — gather context first
-  - `/gsd:research-phase [N]` — investigate unknowns
+  - `/prompts:gsd-discuss-phase [N]` — gather context first
+  - `/prompts:gsd-research-phase [N]` — investigate unknowns
 
   ---
   ```

@@ -25,7 +25,7 @@ ${cyan}   ██████╗ ███████╗██████╗
 
   Get Shit Done ${dim}v${pkg.version}${reset}
   A meta-prompting, context engineering and spec-driven
-  development system for Claude Code by TÂCHES.
+  development system for Codex CLI by TÂCHES.
 `;
 
 // Parse args
@@ -50,9 +50,9 @@ function copyWithPathReplacement(srcDir, destDir, pathPrefix) {
     if (entry.isDirectory()) {
       copyWithPathReplacement(srcPath, destPath, pathPrefix);
     } else if (entry.name.endsWith('.md')) {
-      // Replace ~/.claude/ with the appropriate prefix in markdown files
+      // Replace ~/.codex/ with the appropriate prefix in markdown files
       let content = fs.readFileSync(srcPath, 'utf8');
-      content = content.replace(/~\/\.claude\//g, pathPrefix);
+      content = content.replace(/~\/\.codex\//g, pathPrefix);
       fs.writeFileSync(destPath, content);
     } else {
       fs.copyFileSync(srcPath, destPath);
@@ -65,37 +65,37 @@ function copyWithPathReplacement(srcDir, destDir, pathPrefix) {
  */
 function install(isGlobal) {
   const src = path.join(__dirname, '..');
-  const claudeDir = isGlobal
-    ? path.join(os.homedir(), '.claude')
-    : path.join(process.cwd(), '.claude');
+  const codexDir = isGlobal
+    ? path.join(os.homedir(), '.codex')
+    : path.join(process.cwd(), '.codex');
 
   const locationLabel = isGlobal
-    ? claudeDir.replace(os.homedir(), '~')
-    : claudeDir.replace(process.cwd(), '.');
+    ? codexDir.replace(os.homedir(), '~')
+    : codexDir.replace(process.cwd(), '.');
 
   // Path prefix for file references
-  const pathPrefix = isGlobal ? '~/.claude/' : './.claude/';
+  const pathPrefix = isGlobal ? '~/.codex/' : './.codex/';
 
   console.log(`  Installing to ${cyan}${locationLabel}${reset}\n`);
 
-  // Create commands directory
-  const commandsDir = path.join(claudeDir, 'commands');
-  fs.mkdirSync(commandsDir, { recursive: true });
+  // Create prompts directory
+  const promptsDir = path.join(codexDir, 'prompts');
+  fs.mkdirSync(promptsDir, { recursive: true });
 
-  // Copy commands/gsd with path replacement
-  const gsdSrc = path.join(src, 'commands', 'gsd');
-  const gsdDest = path.join(commandsDir, 'gsd');
-  copyWithPathReplacement(gsdSrc, gsdDest, pathPrefix);
-  console.log(`  ${green}✓${reset} Installed commands/gsd`);
+  // Copy codex prompts with path replacement
+  const promptsSrc = path.join(src, 'codex-prompts');
+  copyWithPathReplacement(promptsSrc, promptsDir, pathPrefix);
+  console.log(`  ${green}✓${reset} Installed codex prompts`);
 
-  // Copy get-shit-done skill with path replacement
-  const skillSrc = path.join(src, 'get-shit-done');
-  const skillDest = path.join(claudeDir, 'get-shit-done');
-  copyWithPathReplacement(skillSrc, skillDest, pathPrefix);
-  console.log(`  ${green}✓${reset} Installed get-shit-done`);
+  // Copy get-shit-done resources with path replacement
+  const resourcesSrc = path.join(src, 'get-shit-done');
+  const resourcesDest = path.join(codexDir, 'get-shit-done');
+  copyWithPathReplacement(resourcesSrc, resourcesDest, pathPrefix);
+  console.log(`  ${green}✓${reset} Installed get-shit-done resources`);
 
   console.log(`
-  ${green}Done!${reset} Run ${cyan}/gsd:help${reset} to get started.
+  ${green}Done!${reset} Run ${cyan}/prompts:gsd-help${reset} to get started.
+  ${dim}Local installs require CODEX_HOME=./.codex to be set when running codex.${reset}
 `);
 }
 
@@ -110,8 +110,8 @@ function promptLocation() {
 
   console.log(`  ${yellow}Where would you like to install?${reset}
 
-  ${cyan}1${reset}) Global ${dim}(~/.claude)${reset} - available in all projects
-  ${cyan}2${reset}) Local  ${dim}(./.claude)${reset} - this project only
+  ${cyan}1${reset}) Global ${dim}(~/.codex)${reset} - available in all projects
+  ${cyan}2${reset}) Local  ${dim}(./.codex)${reset} - this project only
 `);
 
   rl.question(`  Choice ${dim}[1]${reset}: `, (answer) => {

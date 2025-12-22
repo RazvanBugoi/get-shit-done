@@ -23,19 +23,19 @@ Output: [What artifacts will be created]
 </objective>
 
 <execution_context>
-~/.claude/get-shit-done/workflows/execute-phase.md
+~/.codex/get-shit-done/workflows/execute-phase.md
 ./summary.md
 [If plan contains checkpoint tasks (type="checkpoint:*"), add:]
-~/.claude/get-shit-done/references/checkpoints.md
+~/.codex/get-shit-done/references/checkpoints.md
 </execution_context>
 
 <context>
-@.planning/PROJECT.md
-@.planning/ROADMAP.md
+Read file: .planning/PROJECT.md
+Read file: .planning/ROADMAP.md
 [If discovery exists:]
-@.planning/phases/XX-name/DISCOVERY.md
+Read file: .planning/phases/XX-name/DISCOVERY.md
 [Relevant source files:]
-@src/path/to/relevant.ts
+Read file: src/path/to/relevant.ts
 </context>
 
 <tasks>
@@ -188,14 +188,14 @@ Output: Working Next.js app with JWT auth, protected routes, and user model.
 </objective>
 
 <execution_context>
-~/.claude/get-shit-done/workflows/execute-phase.md
+~/.codex/get-shit-done/workflows/execute-phase.md
 ./summary.md
 </execution_context>
 
 <context>
-@.planning/PROJECT.md
-@.planning/ROADMAP.md
-@src/lib/db.ts
+Read file: .planning/PROJECT.md
+Read file: .planning/ROADMAP.md
+Read file: src/lib/db.ts
 </context>
 
 <tasks>
@@ -278,7 +278,7 @@ This is useless. No XML structure, no @context, no verification, no specificity.
 **Context references:**
 
 - Use @path/to/file.md to load files
-- Always include @.planning/PROJECT.md and @.planning/ROADMAP.md
+- Always include `.planning/PROJECT.md` and `.planning/ROADMAP.md`
 - Include relevant source files for context
 - Include workflow/template references
 

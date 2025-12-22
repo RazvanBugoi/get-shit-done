@@ -384,7 +384,7 @@ Next: Phase [X+1] - [Name]
 ⚡ Auto-continuing: Plan Phase [X+1] in detail
 ```
 
-Exit skill and invoke SlashCommand("/gsd:plan-phase [X+1]")
+Exit workflow and ask the user to run `/prompts:gsd-plan-phase [X+1]`
 </if>
 
 <if mode="interactive" OR="custom with gates.confirm_transition true">
@@ -397,15 +397,15 @@ Exit skill and invoke SlashCommand("/gsd:plan-phase [X+1]")
 
 **Phase [X+1]: [Name]** — [Goal from ROADMAP.md]
 
-`/gsd:plan-phase [X+1]`
+`/prompts:gsd-plan-phase [X+1]`
 
 <sub>`/clear` first → fresh context window</sub>
 
 ---
 
 **Also available:**
-- `/gsd:discuss-phase [X+1]` — gather context first
-- `/gsd:research-phase [X+1]` — investigate unknowns
+- `/prompts:gsd-discuss-phase [X+1]` — gather context first
+- `/prompts:gsd-research-phase [X+1]` — investigate unknowns
 - Review roadmap
 
 ---
@@ -423,7 +423,7 @@ Phase [X] marked complete.
 ⚡ Auto-continuing: Complete milestone and archive
 ```
 
-Exit skill and invoke SlashCommand("/gsd:complete-milestone [version]")
+Exit workflow and ask the user to run `/prompts:gsd-complete-milestone [version]`
 </if>
 
 <if mode="interactive" OR="custom with gates.confirm_transition true">
@@ -438,7 +438,7 @@ Exit skill and invoke SlashCommand("/gsd:complete-milestone [version]")
 
 **Complete Milestone [version]** — archive and prepare for next
 
-`/gsd:complete-milestone [version]`
+`/prompts:gsd-complete-milestone [version]`
 
 <sub>`/clear` first → fresh context window</sub>
 

@@ -4,6 +4,10 @@ Orchestrate parallel Explore agents to analyze codebase and produce structured d
 Each agent has fresh context and focuses on specific aspects. Output is concise and actionable for planning.
 </purpose>
 
+<note>
+Codex CLI does not support subagents. Prefer running `get-shit-done-codex map-codebase` for parallel execution, or perform the sections sequentially in a single session.
+</note>
+
 <philosophy>
 **Why parallel agents:**
 - Fresh context per domain (no token contamination)
@@ -296,7 +300,7 @@ Write all 7 codebase documents using templates and agent findings.
 
 For each document:
 
-1. **Read template file** from `~/.claude/get-shit-done/templates/codebase/{name}.md`
+1. **Read template file** from `~/.codex/get-shit-done/templates/codebase/{name}.md`
 2. **Extract the "File Template" section** - this is the markdown code block containing the actual document structure
 3. **Fill template placeholders** with agent findings:
    - Replace `[YYYY-MM-DD]` with current date
@@ -403,14 +407,14 @@ Created .planning/codebase/:
 
 **Initialize project** — use codebase context for planning
 
-`/gsd:new-project`
+`/prompts:gsd-new-project`
 
 <sub>`/clear` first → fresh context window</sub>
 
 ---
 
 **Also available:**
-- Re-run mapping: `/gsd:map-codebase`
+- Re-run mapping: `/prompts:gsd-map-codebase`
 - Review specific file: `cat .planning/codebase/STACK.md`
 - Edit any document before proceeding
 

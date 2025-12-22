@@ -125,8 +125,7 @@ Template for `.planning/codebase/STRUCTURE.md` - captures physical file organiza
 ```
 get-shit-done/
 ├── bin/                # Executable entry points
-├── commands/           # Slash command definitions
-│   └── gsd/           # GSD-specific commands
+├── codex-prompts/      # Codex prompt definitions
 ├── get-shit-done/     # Skill resources
 │   ├── references/    # Principle documents
 │   ├── templates/     # File templates
@@ -145,10 +144,10 @@ get-shit-done/
 - Key files: install.js - handles npx installation
 - Subdirectories: None
 
-**commands/gsd/**
-- Purpose: Slash command definitions for Claude Code
-- Contains: *.md files (one per command)
-- Key files: new-project.md, plan-phase.md, execute-plan.md
+**codex-prompts/**
+- Purpose: Codex prompt definitions for Codex CLI
+- Contains: *.md files (one per prompt)
+- Key files: gsd-new-project.md, gsd-plan-phase.md, gsd-execute-plan.md
 - Subdirectories: None (flat structure)
 
 **get-shit-done/references/**
@@ -165,7 +164,7 @@ get-shit-done/
 
 **get-shit-done/workflows/**
 - Purpose: Reusable multi-step procedures
-- Contains: Workflow definitions called by commands
+- Contains: Workflow definitions called by prompts
 - Key files: execute-phase.md, research-phase.md
 - Subdirectories: None
 
@@ -186,28 +185,28 @@ get-shit-done/
 
 **Documentation:**
 - `README.md` - User-facing installation and usage guide
-- `CLAUDE.md` - Instructions for Claude Code when working in this repo
+- `AGENTS.md` - Instructions for Codex CLI when working in this repo
 
 ## Naming Conventions
 
 **Files:**
 - kebab-case.md: Markdown documents
 - kebab-case.js: JavaScript source files
-- UPPERCASE.md: Important project files (README, CLAUDE, CHANGELOG)
+- UPPERCASE.md: Important project files (README, AGENTS, CHANGELOG)
 
 **Directories:**
 - kebab-case: All directories
-- Plural for collections: templates/, commands/, workflows/
+- Plural for collections: templates/, codex-prompts/, workflows/
 
 **Special Patterns:**
-- {command-name}.md: Slash command definition
+- {prompt-name}.md: Codex prompt definition
 - *-template.md: Could be used but templates/ directory preferred
 
 ## Where to Add New Code
 
-**New Slash Command:**
-- Primary code: `commands/gsd/{command-name}.md`
-- Tests: `tests/commands/{command-name}.test.js` (if testing implemented)
+**New Codex Prompt:**
+- Primary code: `codex-prompts/gsd-{prompt-name}.md`
+- Tests: `tests/commands/{prompt-name}.test.js` (if testing implemented)
 - Documentation: Update `README.md` with new command
 
 **New Template:**
@@ -216,11 +215,11 @@ get-shit-done/
 
 **New Workflow:**
 - Implementation: `get-shit-done/workflows/{name}.md`
-- Usage: Reference from command with `@~/.claude/get-shit-done/workflows/{name}.md`
+- Usage: Reference from command with `~/.codex/get-shit-done/workflows/{name}.md`
 
 **New Reference Document:**
 - Implementation: `get-shit-done/references/{name}.md`
-- Usage: Reference from commands/workflows as needed
+- Usage: Reference from prompts/workflows as needed
 
 **Utilities:**
 - No utilities yet (`install.js` is monolithic)
@@ -229,12 +228,12 @@ get-shit-done/
 ## Special Directories
 
 **get-shit-done/**
-- Purpose: Resources installed to ~/.claude/
+- Purpose: Resources installed to ~/.codex/
 - Source: Copied by bin/install.js during installation
 - Committed: Yes (source of truth)
 
-**commands/**
-- Purpose: Slash commands installed to ~/.claude/commands/
+**codex-prompts/**
+- Purpose: Prompts installed to ~/.codex/prompts/
 - Source: Copied by bin/install.js during installation
 - Committed: Yes (source of truth)
 

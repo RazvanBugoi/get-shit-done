@@ -41,10 +41,10 @@ When creating decimal phase X.Y:
 <required_reading>
 **Read these files NOW:**
 
-1. ~/.claude/get-shit-done/templates/phase-prompt.md
-2. ~/.claude/get-shit-done/references/plan-format.md
-3. ~/.claude/get-shit-done/references/scope-estimation.md
-4. ~/.claude/get-shit-done/references/checkpoints.md
+1. ~/.codex/get-shit-done/templates/phase-prompt.md
+2. ~/.codex/get-shit-done/references/plan-format.md
+3. ~/.codex/get-shit-done/references/scope-estimation.md
+4. ~/.codex/get-shit-done/references/checkpoints.md
 5. Read `.planning/ROADMAP.md`
 6. Read `.planning/PROJECT.md`
 
@@ -283,7 +283,7 @@ Action:
 3. DISCOVERY.md with detailed rationale and validation checkpoints
 4. Return here after DISCOVERY.md created
 
-**NOTE:** For niche/complex domains (3D, games, audio, shaders, ML), consider using `/gsd:research-phase` BEFORE plan-phase. This produces comprehensive RESEARCH.md with ecosystem knowledge that goes beyond "which library" to "how do experts build this."
+**NOTE:** For niche/complex domains (3D, games, audio, shaders, ML), consider using `/prompts:gsd-research-phase` BEFORE plan-phase. This produces comprehensive RESEARCH.md with ecosystem knowledge that goes beyond "which library" to "how do experts build this."
 
 ```
 </discovery_decision_tree>
@@ -420,19 +420,19 @@ For this specific phase, understand:
 - What's the phase goal? (from roadmap)
 - What exists already? (scan codebase if mid-project)
 - What dependencies are met? (previous phases complete?)
-- Any ecosystem research? (RESEARCH.md from /gsd:research-phase)
+- Any ecosystem research? (RESEARCH.md from /prompts:gsd-research-phase)
 - Any discovery findings? (DISCOVERY.md from mandatory discovery)
-- Any phase context? ({phase}-CONTEXT.md from /gsd:discuss-phase)
+- Any phase context? ({phase}-CONTEXT.md from /prompts:gsd-discuss-phase)
 
 ```bash
 # If mid-project, understand current state
 ls -la src/ 2>/dev/null
 cat package.json 2>/dev/null | head -20
 
-# Check for comprehensive ecosystem research (created by /gsd:research-phase)
+# Check for comprehensive ecosystem research (created by /prompts:gsd-research-phase)
 cat .planning/phases/XX-name/${PHASE}-RESEARCH.md 2>/dev/null
 
-# Check for phase-specific context (created by /gsd:discuss-phase)
+# Check for phase-specific context (created by /prompts:gsd-discuss-phase)
 cat .planning/phases/XX-name/${PHASE}-CONTEXT.md 2>/dev/null
 ```
 
@@ -464,8 +464,8 @@ This file contains the user's vision gathered through pre-planning discussion. I
 - `<notes>` → additional context that informs approach
 
 **If neither RESEARCH.md nor CONTEXT.md exist:**
-For niche domains (3D, games, audio, shaders, etc.), suggest `/gsd:research-phase {phase}` first.
-For simpler domains, suggest `/gsd:discuss-phase {phase}` or proceed with roadmap description only.
+For niche domains (3D, games, audio, shaders, etc.), suggest `/prompts:gsd-research-phase {phase}` first.
+For simpler domains, suggest `/prompts:gsd-discuss-phase {phase}` or proceed with roadmap description only.
 
 </step>
 
@@ -501,7 +501,7 @@ For each task, ask: Can I write `expect(fn(input)).toBe(output)` before writing 
 
 **Critical:** If external resource has CLI/API (Vercel, Stripe, Upstash, GitHub, etc.), use type="auto" to automate it. Only checkpoint for verification AFTER automation.
 
-See ~/.claude/get-shit-done/references/checkpoints.md for checkpoint structure and automation guidance.
+See ~/.codex/get-shit-done/references/checkpoints.md for checkpoint structure and automation guidance.
 </step>
 
 <step name="estimate_scope">
@@ -539,7 +539,7 @@ Split into multiple plans by:
 - Plans with checkpoints → execute in main context (user interaction required)
 - Try to group autonomous work together for maximum fresh contexts
 
-See ~/.claude/get-shit-done/references/scope-estimation.md for complete splitting guidance and quality degradation analysis.
+See ~/.codex/get-shit-done/references/scope-estimation.md for complete splitting guidance and quality degradation analysis.
 </step>
 
 <step name="confirm_breakdown">
@@ -648,7 +648,7 @@ Loop until "Create phase prompt" selected.
 </step>
 
 <step name="write_phase_prompt">
-Use template from `~/.claude/get-shit-done/templates/phase-prompt.md`.
+Use template from `~/.codex/get-shit-done/templates/phase-prompt.md`.
 
 **If single plan:**
 Write to `.planning/phases/XX-name/{phase}-01-PLAN.md`
@@ -679,19 +679,19 @@ Output: [What artifacts will be created by this plan]
 
 <execution_context>
 ./execute-phase.md
-~/.claude/get-shit-done/templates/summary.md
+~/.codex/get-shit-done/templates/summary.md
 [If plan has ANY checkpoint tasks (type="checkpoint:*"), add:]
-~/.claude/get-shit-done/references/checkpoints.md
+~/.codex/get-shit-done/references/checkpoints.md
 </execution_context>
 
 <context>
-@.planning/PROJECT.md
-@.planning/ROADMAP.md
-@.planning/STATE.md
+Read file: .planning/PROJECT.md
+Read file: .planning/ROADMAP.md
+Read file: .planning/STATE.md
 
-[If codebase map exists (from /gsd:map-codebase):]
-@.planning/codebase/STACK.md
-@.planning/codebase/ARCHITECTURE.md
+[If codebase map exists (from /prompts:gsd-map-codebase):]
+Read file: .planning/codebase/STACK.md
+Read file: .planning/codebase/ARCHITECTURE.md
 [Add other relevant docs based on phase type - see load_codebase_context step]
 
 **Codebase constraints:**
@@ -699,21 +699,21 @@ Output: [What artifacts will be created by this plan]
 - [Technologies that must be used]
 - [Patterns that must be followed]
 
-[If comprehensive ecosystem research exists (from /gsd:research-phase):]
-@.planning/phases/XX-name/{phase}-RESEARCH.md
+[If comprehensive ecosystem research exists (from /prompts:gsd-research-phase):]
+Read file: .planning/phases/XX-name/{phase}-RESEARCH.md
 
 [If discovery done (from mandatory discovery):]
-@.planning/phases/XX-name/DISCOVERY.md
+Read file: .planning/phases/XX-name/DISCOVERY.md
 
-[If phase context exists (from /gsd:discuss-phase):]
-@.planning/phases/XX-name/{phase}-CONTEXT.md
+[If phase context exists (from /prompts:gsd-discuss-phase):]
+Read file: .planning/phases/XX-name/{phase}-CONTEXT.md
 
 [If continuing from previous plan in same phase:]
-@.planning/phases/XX-name/{phase}-{prev}-SUMMARY.md
+Read file: .planning/phases/XX-name/{phase}-{prev}-SUMMARY.md
 
 [Prior phase summaries relevant to this work (from read_project_history):]
-@.planning/phases/01-foundation/01-02-SUMMARY.md # If contains relevant decisions
-@.planning/phases/02-auth/02-01-SUMMARY.md # If contains relevant patterns
+Read file: .planning/phases/01-foundation/01-02-SUMMARY.md # If contains relevant decisions
+Read file: .planning/phases/02-auth/02-01-SUMMARY.md # If contains relevant patterns
 
 [Document what prior context informed this plan:]
 **Prior decisions affecting this phase:**
@@ -730,7 +730,7 @@ Output: [What artifacts will be created by this plan]
 - [Concern from Phase W's "Next Phase Readiness"]
 
 [Relevant source files:]
-@src/path/to/relevant.ts
+Read file: src/path/to/relevant.ts
 </context>
 
 <tasks>
@@ -771,7 +771,7 @@ Phase plan created: .planning/phases/XX-name/{phase}-01-PLAN.md
 
 **{phase}-01: [Plan Name]** — [objective summary]
 
-`/gsd:execute-plan .planning/phases/XX-name/{phase}-01-PLAN.md`
+`/prompts:gsd-execute-plan .planning/phases/XX-name/{phase}-01-PLAN.md`
 
 <sub>`/clear` first → fresh context window</sub>
 
@@ -800,7 +800,7 @@ Total: [X] tasks across [Y] focused plans.
 
 **{phase}-01: [Plan Name]** — [objective summary]
 
-`/gsd:execute-plan .planning/phases/XX-name/{phase}-01-PLAN.md`
+`/prompts:gsd-execute-plan .planning/phases/XX-name/{phase}-01-PLAN.md`
 
 <sub>`/clear` first → fresh context window</sub>
 
