@@ -17,7 +17,7 @@ _Warning: Not for people who enjoy inconsistent and sloppy results._
 ## Installation
 
 ```bash
-npx get-shit-done-cc
+npx get-shit-done-codex
 ```
 
 That's it. Works on Mac, Windows, and Linux.
@@ -25,6 +25,8 @@ That's it. Works on Mac, Windows, and Linux.
 Verify: `/prompts:gsd-help`
 
 Local install note: run Codex with `CODEX_HOME=./.codex` if you installed locally.
+
+Note: the previous package name `get-shit-done-cc` is deprecated.
 
 ---
 
