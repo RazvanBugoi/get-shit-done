@@ -45,6 +45,9 @@ This wrapper spawns multiple `codex exec` runs in parallel to generate `.plannin
 - `--refresh` - delete and remap existing `.planning/codebase`
 - `--update 1,3` - update specific groups
 - `--concurrency 4` - cap parallel Codex runs
+- `--ui wezterm` - open a WezTerm tab per agent (logs in `.planning/codebase/logs`)
+- `--log-dir ./logs` - override log output directory
+- `--allow-network` - allow network access (uses `--sandbox danger-full-access`, aliases: `--search`, `--web`)
 - `-- --model gpt-5.1-codex-max` - pass extra args to `codex exec`
 
 ---

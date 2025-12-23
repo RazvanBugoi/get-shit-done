@@ -260,6 +260,7 @@ Set during `/prompts:gsd-new-project`:
 - Only stops for critical checkpoints
 
 Change anytime by editing `.planning/config.json`
+Or override per run: `/prompts:gsd-execute-plan <plan> --yolo` (does not edit config)
 
 ## Common Workflows
 

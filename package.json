@@ -21,12 +21,16 @@
     "context-engineering",
     "spec-driven-development"
   ],
-  "author": "TÂCHES",
+  "author": "Razvan Bugoi <razbugoi99@users.noreply.github.com>",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/glittercowboy/get-shit-done.git"
+    "url": "git+https://github.com/RazvanBugoi/get-shit-done.git"
   },
+  "bugs": {
+    "url": "https://github.com/RazvanBugoi/get-shit-done/issues"
+  },
+  "homepage": "https://github.com/RazvanBugoi/get-shit-done#readme",
   "engines": {
     "node": ">=16.7.0"
   }

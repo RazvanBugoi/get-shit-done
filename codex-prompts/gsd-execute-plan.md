@@ -1,6 +1,6 @@
 ---
 description: Execute a PLAN.md file
-argument-hint: "[path-to-PLAN.md]"
+argument-hint: "[path-to-PLAN.md] [--yolo|--interactive]"
 ---
 <objective>
 Execute a PLAN.md file, create SUMMARY.md, update project state, commit.
@@ -20,6 +20,7 @@ Read file: ~/.codex/get-shit-done/references/checkpoints.md
 
 <context>
 Plan path: $ARGUMENTS
+Optional override: if $ARGUMENTS includes `--yolo` or `--interactive`, use that mode for this run and strip the flag from the plan path. Do not modify `.planning/config.json` unless asked.
 
 **Load project state first:**
 Read file: .planning/STATE.md
@@ -32,7 +33,7 @@ Read file: .planning/config.json
 1. Check .planning/ directory exists (error if not - user should run /prompts:gsd-new-project)
 2. Verify plan at $ARGUMENTS exists
 3. Check if SUMMARY.md already exists (plan already executed?)
-4. Load workflow config for mode (interactive/yolo)
+4. Load workflow config for mode (interactive/yolo) unless overridden by $ARGUMENTS
 5. Follow execute-phase.md workflow:
    - Parse plan and determine execution strategy (A/B/C)
    - Execute tasks (via subagent or main context as appropriate)

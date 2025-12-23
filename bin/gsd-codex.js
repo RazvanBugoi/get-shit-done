@@ -7,6 +7,11 @@ const { spawn } = require('child_process');
 
 const DEFAULT_CONCURRENCY = 4;
 const CODEX_BIN = process.env.GSD_CODEX_BIN || 'codex';
+const WEZTERM_BIN = process.env.GSD_WEZTERM_BIN || 'wezterm';
+const DEFAULT_UI = 'inline';
+const SUPPORTED_UI = new Set(['inline', 'wezterm']);
+const DEFAULT_ALLOW_NETWORK =
+  String(process.env.GSD_ALLOW_NETWORK || '').toLowerCase() === 'true';
 
 const GROUPS = [
   {
@@ -87,6 +92,11 @@ Options:
   --update <groups>    Update specific groups (comma-separated ids or numbers)
   --skip-existing      Exit if .planning/codebase already exists
   --concurrency <n>    Max parallel codex exec runs (default: ${DEFAULT_CONCURRENCY})
+  --ui <mode>          UI mode: inline (default) or wezterm
+  --log-dir <path>     Directory for per-agent logs (default: .planning/codebase/logs)
+  --allow-network      Allow network access (sets --sandbox danger-full-access)
+  --search             Alias for --allow-network
+  --web                Alias for --allow-network
   --help               Show this help
 
 Groups:
@@ -99,6 +109,8 @@ Examples:
   get-shit-done-codex map-codebase
   get-shit-done-codex map-codebase --refresh
   get-shit-done-codex map-codebase --update 1,4
+  get-shit-done-codex map-codebase --ui wezterm
+  get-shit-done-codex map-codebase --allow-network
   get-shit-done-codex map-codebase -- --model gpt-5.1-codex-max --full-auto
 `.trim();
 }
@@ -115,6 +127,9 @@ function parseArgs(argv) {
     update: null,
     skipExisting: false,
     concurrency: DEFAULT_CONCURRENCY,
+    ui: DEFAULT_UI,
+    logDir: null,
+    allowNetwork: DEFAULT_ALLOW_NETWORK,
     codexArgs
   };
 
@@ -137,6 +152,17 @@ function parseArgs(argv) {
       case '--concurrency':
         opts.concurrency = Number(mainArgs.shift());
         break;
+      case '--ui':
+        opts.ui = normalizeToken(mainArgs.shift() || '');
+        break;
+      case '--log-dir':
+        opts.logDir = mainArgs.shift() || '';
+        break;
+      case '--allow-network':
+      case '--search':
+      case '--web':
+        opts.allowNetwork = true;
+        break;
       case '--help':
         opts.command = 'help';
         break;
@@ -147,6 +173,9 @@ function parseArgs(argv) {
 
   if (!Number.isFinite(opts.concurrency) || opts.concurrency < 1) {
     throw new Error('Concurrency must be a positive integer.');
+  }
+  if (!SUPPORTED_UI.has(opts.ui)) {
+    throw new Error(`Unknown ui mode: ${opts.ui}`);
   }
 
   return opts;
@@ -241,7 +270,7 @@ function validateTemplates(groups) {
   }
 }
 
-function buildPrompt(group, planningDir) {
+function buildPrompt(group, planningDir, allowNetwork) {
   const outputLines = group.outputs
     .map((output) => {
       const templatePath = getTemplatePath(output.template);
@@ -263,7 +292,7 @@ Rules:
 - Use the templates listed below and preserve their structure.
 - If something is not detected, write "Not detected".
 - Only edit the output files listed below.
-- Do not run network commands.
+- ${allowNetwork ? 'Web search is allowed when needed.' : 'Do not run network commands.'}
 - Prefer rg for searching when possible.
 
 Templates and outputs:
@@ -283,14 +312,104 @@ function formatArgsForLog(args) {
   return args.map((arg) => (arg.includes(' ') ? JSON.stringify(arg) : arg)).join(' ');
 }
 
-function pipeWithPrefix(stream, prefix) {
+function pipeWithPrefixAndLog(stream, prefix, logStream, showOutput, sourceLabel) {
   const rl = readline.createInterface({ input: stream });
   rl.on('line', (line) => {
-    process.stdout.write(`${prefix}${line}\n`);
+    if (logStream) {
+      const logPrefix = sourceLabel ? `[${sourceLabel}] ` : '';
+      logStream.write(`${logPrefix}${line}\n`);
+    }
+    if (showOutput) {
+      process.stdout.write(`${prefix}${line}\n`);
+    }
   });
 }
 
-function buildCodexArgs(userArgs) {
+function resolveLogDir(planningDir, logDir) {
+  if (!logDir) {
+    return path.join(planningDir, 'logs');
+  }
+  return path.resolve(process.cwd(), logDir);
+}
+
+function getLogPath(logDir, group) {
+  return path.join(logDir, `${group.id}.log`);
+}
+
+function initStatus(groups) {
+  const status = new Map();
+  for (const group of groups) {
+    status.set(group.id, {
+      id: group.id,
+      label: group.label,
+      state: 'queued',
+      startedAt: null,
+      endedAt: null
+    });
+  }
+  return status;
+}
+
+function formatDuration(ms) {
+  if (!Number.isFinite(ms) || ms < 0) return '-';
+  const totalSeconds = Math.floor(ms / 1000);
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  if (minutes === 0) return `${seconds}s`;
+  return `${minutes}m ${seconds}s`;
+}
+
+function renderStatus(statusMap, context = {}) {
+  const now = Date.now();
+  const lines = [];
+  lines.push('GSD map-codebase (WezTerm UI)');
+  lines.push('');
+  lines.push('Status:');
+  for (const item of statusMap.values()) {
+    const elapsed = item.startedAt ? formatDuration((item.endedAt || now) - item.startedAt) : '-';
+    lines.push(`- ${item.label} (${item.id}): ${item.state} | ${elapsed}`);
+  }
+  lines.push('');
+  if (context.logs) {
+    lines.push(`Logs: ${context.logs}`);
+  }
+  if (context.command) {
+    lines.push(`Command: ${context.command}`);
+  }
+  if (context.concurrency) {
+    lines.push(`Concurrency: ${context.concurrency}`);
+  }
+  process.stdout.write('\x1b[2J\x1b[H');
+  process.stdout.write(lines.join('\n') + '\n');
+}
+
+function spawnWeztermTabs(groups, logDir) {
+  for (const group of groups) {
+    const logPath = getLogPath(logDir, group);
+    const args = [
+      'cli',
+      'spawn',
+      '--new-tab',
+      '--cwd',
+      process.cwd(),
+      '--',
+      'tail',
+      '-f',
+      logPath
+    ];
+    const child = spawn(WEZTERM_BIN, args, { stdio: 'ignore' });
+    child.on('error', (err) => {
+      console.warn(`WezTerm spawn failed (${group.id}): ${err.message}`);
+    });
+    child.on('exit', (code) => {
+      if (code && code !== 0) {
+        console.warn(`WezTerm spawn exited (${group.id}) with code ${code}`);
+      }
+    });
+  }
+}
+
+function buildCodexArgs(userArgs, allowNetwork) {
   const args = ['exec'];
   const hasFullAuto = userArgs.some(
     (arg) => arg === '--full-auto' || arg.startsWith('--full-auto=')
@@ -298,41 +417,74 @@ function buildCodexArgs(userArgs) {
   const hasSandbox = userArgs.some(
     (arg) => arg === '--sandbox' || arg.startsWith('--sandbox=')
   );
+  const hasBypass = userArgs.includes('--dangerously-bypass-approvals-and-sandbox');
   if (!hasFullAuto) {
     args.push('--full-auto');
   }
-  if (!hasSandbox) {
-    args.push('--sandbox', 'workspace-write');
+  if (!hasSandbox && !hasBypass) {
+    args.push('--sandbox', allowNetwork ? 'danger-full-access' : 'workspace-write');
   }
   return args.concat(userArgs);
 }
 
-async function runCodexJob(group, planningDir, userCodexArgs) {
-  const prompt = buildPrompt(group, planningDir);
-  const codexArgs = buildCodexArgs(userCodexArgs).concat(prompt);
+async function runCodexJob(group, planningDir, userCodexArgs, options) {
+  const prompt = buildPrompt(group, planningDir, options.allowNetwork);
+  const codexArgs = buildCodexArgs(userCodexArgs, options.allowNetwork).concat(prompt);
   const label = `[${group.id}] `;
+  const logPath = getLogPath(options.logDir, group);
+  const logStream = fs.createWriteStream(logPath, { flags: 'w' });
+
+  logStream.write(`# ${group.label} (${group.id})\n`);
+  logStream.write(`# Started: ${new Date().toISOString()}\n\n`);
+
+  const setStatus = (state) => {
+    if (!options.statusMap) return;
+    const entry = options.statusMap.get(group.id);
+    if (!entry) return;
+    entry.state = state;
+    if (state === 'running') {
+      entry.startedAt = Date.now();
+    }
+    if (state === 'done' || state === 'failed') {
+      entry.endedAt = Date.now();
+    }
+    if (options.renderStatus) {
+      options.renderStatus(options.statusMap);
+    }
+  };
 
   return new Promise((resolve, reject) => {
+    setStatus('running');
     const child = spawn(CODEX_BIN, codexArgs, {
       stdio: ['ignore', 'pipe', 'pipe'],
       cwd: process.cwd()
     });
 
-    pipeWithPrefix(child.stdout, label);
-    pipeWithPrefix(child.stderr, label);
+    pipeWithPrefixAndLog(child.stdout, label, logStream, options.showOutput, 'stdout');
+    pipeWithPrefixAndLog(child.stderr, label, logStream, options.showOutput, 'stderr');
 
-    child.on('error', reject);
+    child.on('error', (err) => {
+      logStream.write(`\n# Error: ${err.message}\n`);
+      logStream.end();
+      setStatus('failed');
+      reject(err);
+    });
     child.on('exit', (code) => {
+      logStream.write(`\n# Exit code: ${code}\n`);
+      logStream.write(`# Finished: ${new Date().toISOString()}\n`);
+      logStream.end();
       if (code === 0) {
+        setStatus('done');
         resolve();
       } else {
+        setStatus('failed');
         reject(new Error(`${group.id} failed with exit code ${code}`));
       }
     });
   });
 }
 
-async function runJobsInParallel(jobs, planningDir, userCodexArgs, concurrency) {
+async function runJobsInParallel(jobs, planningDir, userCodexArgs, concurrency, options) {
   let index = 0;
   let active = 0;
   let failed = false;
@@ -347,7 +499,7 @@ async function runJobsInParallel(jobs, planningDir, userCodexArgs, concurrency) 
       while (active < concurrency && index < jobs.length) {
         const job = jobs[index++];
         active += 1;
-        runCodexJob(job, planningDir, userCodexArgs)
+        runCodexJob(job, planningDir, userCodexArgs, options)
           .then(() => {
             active -= 1;
             next();
@@ -405,12 +557,52 @@ async function mapCodebase(opts) {
 
   validateTemplates(selectedGroups);
 
-  console.log(`Running ${selectedGroups.length} codex exec job(s) with concurrency ${opts.concurrency}.`);
-  console.log(
-    `Command: ${CODEX_BIN} ${formatArgsForLog(buildCodexArgs(opts.codexArgs))} "<prompt>"`
-  );
+  const logDir = resolveLogDir(planningDir, opts.logDir);
+  ensureDir(logDir);
 
-  await runJobsInParallel(selectedGroups, planningDir, opts.codexArgs, opts.concurrency);
+  const statusMap = initStatus(selectedGroups);
+  const showOutput = opts.ui !== 'wezterm';
+  const commandPreview = `${CODEX_BIN} ${formatArgsForLog(
+    buildCodexArgs(opts.codexArgs, opts.allowNetwork)
+  )} "<prompt>"`;
+  const render =
+    opts.ui === 'wezterm'
+      ? (map) =>
+          renderStatus(map, {
+            logs: logDir,
+            command: commandPreview,
+            concurrency: opts.concurrency
+          })
+      : null;
+
+  if (render) {
+    render(statusMap);
+  }
+
+  if (opts.ui === 'wezterm') {
+    for (const group of selectedGroups) {
+      const logPath = getLogPath(logDir, group);
+      if (!fs.existsSync(logPath)) {
+        fs.writeFileSync(logPath, '');
+      }
+    }
+    spawnWeztermTabs(selectedGroups, logDir);
+  }
+
+  if (opts.ui !== 'wezterm') {
+    console.log(
+      `Running ${selectedGroups.length} codex exec job(s) with concurrency ${opts.concurrency}.`
+    );
+    console.log(`Command: ${commandPreview}`);
+  }
+
+  await runJobsInParallel(selectedGroups, planningDir, opts.codexArgs, opts.concurrency, {
+    logDir,
+    showOutput,
+    statusMap,
+    renderStatus: render,
+    allowNetwork: opts.allowNetwork
+  });
   console.log('Codebase mapping complete.');
 }
 
