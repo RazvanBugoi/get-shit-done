@@ -1,6 +1,6 @@
 {
   "name": "get-shit-done-codex",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "A meta-prompting, context engineering and spec-driven development system for Codex CLI by TÂCHES.",
   "bin": {
     "get-shit-done-cc": "bin/install.js",
